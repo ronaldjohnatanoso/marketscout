@@ -1,0 +1,22 @@
+{
+  "name": "marketscout",
+  "version": "0.1.0",
+  "description": "Active market opportunity discovery engine — finds pre-mainstream investment candidates before they go viral",
+  "main": "pipeline.js",
+  "type": "module",
+  "scripts": {
+    "scan": "node src/scheduler/scheduler.js",
+    "pipeline": "node pipeline.js",
+    "test:narratives": "node src/discovery/narratives.js",
+    "test:scanner": "node src/discovery/scanner.js",
+    "test:discord": "node src/notifiers/discord.js --test",
+    "report": "node src/report/generator.js",
+    "alerts:list": "node src/scheduler/scheduler.js --list",
+    "alerts:clear": "node src/scheduler/scheduler.js --clear"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {}
+}

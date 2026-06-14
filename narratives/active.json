@@ -1,0 +1,79 @@
+[
+  {
+    "id": "ai-memory-demand",
+    "name": "AI Training → Memory Bottleneck",
+    "description": "Massive GPU deployments for AI training create VRAM/HBM demand surge. Memory companies (Micron, SanDisk, SK Hynix) underpriced relative to coming demand supercycle.",
+    "trigger": "AI capex announcements, GPU shipment data, memory contract prices",
+    "sectors": ["semiconductors", "memory-chips", " semiconductor-equipment"],
+    "keywords": ["HBM", "VRAM", "memory", "DRAM", "NAND", "AI training", "GPU", "HBM3", "memory contract"],
+    "related_tickers": ["MU", "WDC", "SKT", "三星", "SEC", "AMAT", "LRCX"],
+    "confidence": 0.85,
+    "stage": "early"
+  },
+  {
+    "id": "ai-infrastructure",
+    "name": "AI Infrastructure Buildout",
+    "description": "Hyperscalers building out AI infrastructure — data centers, power, cooling, networking. Downstream winners beyond the obvious NVDA/AMD.",
+    "trigger": "Datacenter capex announcements, power grid data, cooling tech news",
+    "sectors": ["data-center", "power-management", "cooling", "networking", "electrical-infrastructure"],
+    "keywords": ["datacenter", "power", "cooling", "electrical", "grid", "UPS", "power-conversion", "optical-interconnect"],
+    "related_tickers": ["VRT", "ETN", "EMR", "CARR", "AIQ", "FSLR"],
+    "confidence": 0.8,
+    "stage": "mid"
+  },
+  {
+    "id": "us-china-tech-decoupling",
+    "name": "US-China Tech Decoupling",
+    "description": "Export controls, tariffs, and supply chain shifts creating winners in non-China supply chains. Southeast Asia, India, Mexico manufacturing plays.",
+    "trigger": "Export control announcements, tariff updates, supply chain relocation news",
+    "sectors": ["manufacturing", "semiconductor-equipment", "chemical", "raw-materials"],
+    "keywords": ["export control", "tariff", "supply chain shift", "Southeast Asia", "Vietnam", "India manufacturing", "Mexico", "reshoring"],
+    "related_tickers": ["TSM", "ASML", "AMAT", "LRCX", "Vietnam", "India制造"],
+    "confidence": 0.75,
+    "stage": "early"
+  },
+  {
+    "id": "biotech-ai-convergence",
+    "name": "AI-Driven Drug Discovery",
+    "description": "AI accelerating drug discovery timelines. Companies using AI for protein folding, molecule screening, clinical trial design.",
+    "trigger": "AI drug pipeline announcements, FDA approvals for AI-discovered drugs, major pharma AI partnerships",
+    "sectors": ["biotech", "pharma", "ai-drug-discovery"],
+    "keywords": ["AI drug", "protein folding", "molecule", "clinical trial", "drug discovery", "alphafold", "biotech AI"],
+    "related_tickers": ["RVTY", "EXAS", "REGN", "BMY", "LLY", "Recursion", "Absci"],
+    "confidence": 0.7,
+    "stage": "early"
+  },
+  {
+    "id": "energy-transition-acceleration",
+    "name": "Energy Transition Acceleration",
+    "description": "Grid buildout, IRA incentives, and AI power demand converging. Power infrastructure companies underpriced vs. actual buildout needs.",
+    "trigger": "IRA announcements, grid investment news, electricity demand data",
+    "sectors": ["power-grid", "battery-storage", "solar", "wind", "electrical-infrastructure"],
+    "keywords": ["grid", "battery storage", "IRA", "inflation reduction act", "power demand", "electricity", "interconnect", "transmission"],
+    "related_tickers": ["FSLR", "ENPH", "SEDG", "BE", "NEE", "ORA"],
+    "confidence": 0.7,
+    "stage": "mid"
+  },
+  {
+    "id": "defense-tech-modernization",
+    "name": "Defense Tech Modernization",
+    "description": "Geopolitical tensions driving defense spending on advanced tech: drones, AI military applications, space, cyber.",
+    "trigger": "Defense budget announcements, conflict escalation, military tech contracts",
+    "sectors": ["defense", "aerospace", "drones", "space", "cyber"],
+    "keywords": ["defense", "drone", "military AI", "space", "cyber", "missile", "autonomous", "UAV"],
+    "related_tickers": ["LHX", "LMT", "RTX", "NOC", "BA", "GHM"],
+    "confidence": 0.65,
+    "stage": "early"
+  },
+  {
+    "id": "commodity-supercycle",
+    "name": "Commodity Supercycle Reborn",
+    "description": "AI + energy transition + reshoring = massive raw material demand. Copper, lithium, cobalt, rare earths underpriced.",
+    "trigger": "Commodity price movements, mining project announcements, EV demand data",
+    "sectors": ["mining", "commodities", "metals", "rare-earths"],
+    "keywords": ["copper", "lithium", "cobalt", "rare earth", "mining", "commodities", "raw materials", "EV battery"],
+    "related_tickers": ["FCX", "SCCO", "AA", "NEM", "PLG", "LPD", "China稀土"],
+    "confidence": 0.6,
+    "stage": "early"
+  }
+]

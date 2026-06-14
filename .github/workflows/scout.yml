@@ -1,0 +1,82 @@
+name: MarketScout Discovery
+
+on:
+  schedule:
+    # Every 15 minutes — real-time opportunity monitoring
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    # Manual trigger
+  push:
+    branches: [main]
+
+jobs:
+  scan:
+    name: MarketScout Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Run MarketScout scan
+        run: node src/scheduler/scheduler.js
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ALERT_THRESHOLD: ${{ secrets.ALERT_THRESHOLD || '6.0' }}
+      
+      - name: Commit updated reports
+        run: |
+          git config --local user.email "marketscout@github.com"
+          git config --local user.name "MarketScout Bot"
+          
+          # Check if anything changed
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add alerts/ data/
+            git commit -m "chore: MarketScout scan $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
+
+  daily-summary:
+    name: Daily Summary
+    runs-on: ubuntu-latest
+    # Run once per day at market close (9:30 PM SGT = 13:30 UTC)
+    cron: '30 13 * * 1-5'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      
+      - name: Generate daily summary
+        run: node pipeline.js --report
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      
+      - name: Commit daily summary
+        run: |
+          git config --local user.email "marketscout@github.com"
+          git config --local user.name "MarketScout Bot"
+          git add alerts/latest.md
+          git commit -m "docs: Daily brief $(date -u +'%Y-%m-%d')"
+          git push
