@@ -88,7 +88,21 @@ async function runPipeline() {
     console.log(`[Pipeline] Technical analysis complete`);
   }
   
-  // Step 3: Generate report
+  // Step 3: LLM qualitative analysis
+  if (mode === '--all' || mode === '--llm') {
+    console.log('[Pipeline] Step 3: Running LLM qualitative analysis...');
+    const { analyzeCandidates } = await import('./src/analysis/llm-analyzer.js');
+    const { loadNarratives } = await import('./src/discovery/narratives.js');
+    const narratives = loadNarratives();
+    
+    scanResult.topCandidates = await analyzeCandidates(
+      scanResult.topCandidates.slice(0, 5),
+      narratives
+    );
+    console.log(`[Pipeline] LLM analysis complete`);
+  }
+  
+  // Step 4: Generate report
   if (mode === '--all' || mode === '--report') {
     console.log('[Pipeline] Step 3: Generating report...');
     const { saveReport } = await import('./src/report/generator.js');
