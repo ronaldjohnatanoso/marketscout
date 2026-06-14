@@ -110,40 +110,73 @@ export function calculateMA(closes) {
 }
 
 /**
+ * Fetch historical candles for a symbol via yfinance (Python)
+ * Fallback when Finnhub doesn't have candle data
+ */
+export async function fetchCandlesViaYfinance(symbol) {
+  const { execSync } = await import('child_process');
+  const path = await import('path');
+  const { fileURLToPath } = await import('url');
+  
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const scriptPath = path.join(__dirname, 'yfinance_data.py');
+  const venvPython = path.join(__dirname, '../../../.venv/bin/python');
+  
+  try {
+    const result = execSync(`${venvPython} "${scriptPath}" ${symbol} --screen`, {
+      timeout: 30000,
+      encoding: 'utf8'
+    });
+    return JSON.parse(result);
+  } catch (e) {
+    // Try system python as fallback
+    try {
+      const result = execSync(`python3 "${scriptPath}" ${symbol} --screen`, {
+        timeout: 30000,
+        encoding: 'utf8'
+      });
+      return JSON.parse(result);
+    } catch (e2) {
+      console.error(`[Quant] yfinance failed for ${symbol}:`, e2.message);
+      return { symbol, error: 'yfinance unavailable' };
+    }
+  }
+}
+
+/**
  * Fetch historical candles for a symbol
  */
 export async function fetchCandles(symbol, resolution = 'D', from = null, to = null, token = '') {
-  if (!token) {
-    // Return simulated data for testing
-    return generateSimulatedCandles(symbol);
-  }
-  
-  const now = Math.floor(Date.now() / 1000);
-  const fromTs = from || now - 90 * 24 * 60 * 60; // 90 days
-  const toTs = to || now;
-  
-  try {
-    const res = await axios.get(`https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${fromTs}&to=${toTs}`, {
-      params: { token },
-      timeout: 10000
-    });
+  // Try Finnhub first
+  if (token) {
+    const now = Math.floor(Date.now() / 1000);
+    const fromTs = from || now - 90 * 24 * 60 * 60;
+    const toTs = to || now;
     
-    if (res.data.s === 'ok') {
-      return {
-        symbol,
-        closes: res.data.c,
-        highs: res.data.h,
-        lows: res.data.l,
-        opens: res.data.o,
-        volumes: res.data.v || [],
-        timestamps: res.data.t
-      };
+    try {
+      const res = await axios.get(`https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${fromTs}&to=${toTs}`, {
+        params: { token },
+        timeout: 10000
+      });
+      
+      if (res.data.s === 'ok' && res.data.c && res.data.c.length > 20) {
+        return {
+          symbol,
+          closes: res.data.c,
+          highs: res.data.h,
+          lows: res.data.l,
+          opens: res.data.o,
+          volumes: res.data.v || [],
+          timestamps: res.data.t
+        };
+      }
+    } catch (e) {
+      // Finnhub failed, fall through to yfinance
     }
-    return null;
-  } catch (e) {
-    console.error(`[Quant] Failed to fetch candles for ${symbol}:`, e.message);
-    return null;
   }
+  
+  // Fallback to yfinance
+  return fetchCandlesViaYfinance(symbol);
 }
 
 /**
@@ -179,7 +212,13 @@ function generateSimulatedCandles(symbol) {
  */
 export async function screenCandidate(symbol, token = FINNHUB_API_KEY) {
   const candles = await fetchCandles(symbol, 'D', null, null, token);
-  if (!candles || candles.closes.length < 20) {
+  
+  // If yfinance returned full analysis, use it directly
+  if (candles && candles.signal) {
+    return candles;
+  }
+  
+  if (!candles || !candles.closes || candles.closes.length < 20) {
     return { symbol, error: 'Insufficient data' };
   }
   

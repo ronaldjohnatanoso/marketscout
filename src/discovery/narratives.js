@@ -107,6 +107,6 @@ export function printNarrativeStatus() {
 }
 
 // CLI test
-if (process.argv[1].endsWith('narratives.js')) {
+if (process.argv[1] && process.argv[1].endsWith('narratives.js')) {
   printNarrativeStatus();
 }
